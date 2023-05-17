@@ -1,0 +1,52 @@
+name: Release
+on:
+  workflow_dispatch:
+env:
+  BASE: /relief/
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+      - name: Install pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8.5.1
+      - name: Install Node
+        uses: actions/setup-node@v3
+        with:
+          cache: pnpm
+      - name: Install Dependencies
+        run: pnpm install --frozen-lockfile
+      - name: Build
+        run: pnpm run build
+      - name: Upload Build Result
+        uses: actions/upload-artifact@v3
+        with:
+          name: relief
+          path: dist
+  deploy:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Get Code
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.TOKEN }}
+          repository: sabicalija/relief
+          ref: main
+      - name: Clean
+        run: rm -rf *
+      - name: Download Build Result
+        uses: actions/download-artifact@v3
+        with:
+          name: relief
+      - name: Release
+        run: |
+          git config --global user.name "${{ github.actor }}"
+          git config --global user.email ""
+          git add .
+          git commit -m "Release: GitHub Action"
+      - name: Upload
+        run: git push
