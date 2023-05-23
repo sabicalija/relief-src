@@ -1,11 +1,12 @@
-<script setup lang="ts">
-import UploadImage from "./components/UploadImage.vue";
-import SubmitUrl from "./components/SubmitUrl.vue";
-</script>
+<script setup lang="ts"></script>
 
 <template>
-  <UploadImage />
-  <SubmitUrl />
+  <nav>
+    <router-link to="/">Step 1</router-link>
+    <router-link to="/depth-map">Step 2</router-link>
+    <router-link to="/stl">Step 3</router-link>
+  </nav>
+  <router-view></router-view>
 </template>
 
 <style scoped></style>
